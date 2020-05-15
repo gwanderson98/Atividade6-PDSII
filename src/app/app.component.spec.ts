@@ -1,35 +1,32 @@
-import { TestBed, async } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
-import { AppComponent } from './app.component';
+import { Component, OnInit } from '@angular/core';
+import { LoginService } from './login /login.service';
 
-describe('AppComponent', () => {
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule
-      ],
-      declarations: [
-        AppComponent
-      ],
-    }).compileComponents();
-  }));
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent implements OnInit {
+  title = 'Rotas com Login';
+  constructor(private authService: LoginService) {}
+  
+  private showNavBar: boolean = false;
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app).toBeTruthy();
-  });
+  ngOnInit(){
+    this.authService.showNavBarEmitter.subscribe(
+      (mode: boolean) => {
+         if(mode !== null) {
+           this.showNavBar = mode;
+         }
+      }
+    );
+  }
 
-  it(`should have as title 'Atividade6'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app.title).toEqual('Atividade6');
-  });
+  isAuth() {
+    return this.authService.isAuthenticated();
+  }
 
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('.content span').textContent).toContain('Atividade6 app is running!');
-  });
-});
+  onLogout() {   
+    this.authService.logout();
+  }
+}
